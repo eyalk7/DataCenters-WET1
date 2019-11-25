@@ -13,18 +13,18 @@ class DataCenter {
     int GetWinNum() const;
 
 private:
-    class Node {
+    class ServerNode {
     public:
         int idx;
-        Node *next, *prev;
+        ServerNode *next, *prev;
 
-        Node(int idx, Node* next = nullptr, Node* prev = nullptr) :
+        ServerNode(int idx, ServerNode* next = nullptr, ServerNode* prev = nullptr) :
                 idx( idx ), next( next ), prev( prev ) {};
     };
 
     class Server {
     public:
-        Node* inList;
+        ServerNode* inList;
         bool isUsed;
         OS os;
 
@@ -33,8 +33,7 @@ private:
     };
 
     Server* servers;
-    Node *winFirst, *winLast;
-    Node *linuxFirst, *linuxLast;
+    ServerNode *winDummy, *linuxDummy;
     int linuxNum, winNum;
 };
 
