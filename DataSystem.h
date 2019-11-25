@@ -6,7 +6,7 @@
 // key class for the trees that are sorted by operation system
 class OSKey {
 public:
-    OSKey(int serverCount, int dataCenterID);
+    OSKey(int serverCount, int dataCenterID); // inline
     bool operator<(const OSKey& other) const;
     bool operator==(const OSKey& other) const;
 
