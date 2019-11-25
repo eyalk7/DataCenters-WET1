@@ -6,6 +6,8 @@ enum AVLResult {SUCCESS, FAILURE};
 template <class KeyType, class DataType>
 class AVL {
 public:
+    int size;
+
     AVL();
     ~AVL();
     TreeIterator find(KeyType key);
@@ -46,9 +48,9 @@ private:
     };
     TreeNode *dummyRoot;
 
-    void BalanceSubTree(TreeNode* subTreeRoot);
-    void rotateRight(TreeNode* subTreeRoot);
-    void rotateLeft(TreeNode* subTreeRoot);
+    static void BalanceSubTree(TreeNode* subTreeRoot);
+    static void rotateRight(TreeNode* subTreeRoot);
+    static void rotateLeft(TreeNode* subTreeRoot);
 };
 
 #endif //DATACENTERS_WET1_AVL_H

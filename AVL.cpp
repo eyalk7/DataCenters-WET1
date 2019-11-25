@@ -1,7 +1,7 @@
 #include "AVL.h"
 
-AVL::AVL() {
-
+AVL::AVL() : size(0) {
+    // create dummy
 }
 
 AVL::~AVL() {
@@ -20,6 +20,8 @@ AVLResult AVL::insert(KeyType key, DataType& data) {
     // if you find it SUCCESS
     // if you dont find it add:
         // balance tree for each node in the recursive return
+
+    // size++
 }
 
 AVLResult AVL::remove(KeyType key) {
@@ -28,6 +30,8 @@ AVLResult AVL::remove(KeyType key) {
     // if leaf -> remove
     // if one son -> change the one son for grandson
     // if two sons -> ...
+
+    // size--
 }
 
 TreeIterator AVL::begin() {
