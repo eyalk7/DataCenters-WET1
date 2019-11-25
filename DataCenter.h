@@ -1,13 +1,19 @@
 #ifndef DATACENTERS_WET1_DATACENTER_H
 #define DATACENTERS_WET1_DATACENTER_H
 
-enum StatusType {SUCCESS, FAILURE, INVALID_INPUT, ALLOCATION_ERROR };
+typedef enum {
+    SUCCESS = 0,
+    FAILURE = -1,
+    ALLOCATION_ERROR = -2,
+    INVALID_INPUT = -3
+} StatusType;
 enum OS {LINUX, WINDOWS};
 
 class DataCenter {
-    DataCenter();
+public:
+    DataCenter(int numOfServers);
     ~DataCenter();
-    StatusType RequestServer(int serverID, int os, int *assignedID);
+    StatusType RequestServer(int serverID, OS os, int *assignedID);
     StatusType FreeServer(int serverID);
     int GetLinuxNum() const;
     int GetWinNum() const;
@@ -18,8 +24,8 @@ private:
         int idx;
         ServerNode *next, *prev;
 
-        ServerNode(int idx, ServerNode* next = nullptr, ServerNode* prev = nullptr) :
-                idx( idx ), next( next ), prev( prev ) {};
+        ServerNode(int idx) :
+            idx( idx ), next( nullptr ), prev( nullptr ) {};
     };
 
     class Server {
@@ -28,13 +34,15 @@ private:
         bool isUsed;
         OS os;
 
-        Server(Node* inList = nullptr) :
-            inList( inList ), isUsed( false ), os( LINUX ) {};
+        Server() :
+            inList( new ServerNode(i) ), isUsed( false ), os( LINUX ) {};
     };
 
     Server* servers;
     ServerNode *winDummy, *linuxDummy;
     int linuxNum, winNum;
+
+    static void DeleteServersList(ServerNode* root);
 };
 
 

@@ -1,28 +1,30 @@
 #ifndef DATACENTERS_WET1_AVL_H
 #define DATACENTERS_WET1_AVL_H
 
-enum AVLResult {SUCCESS, FAILURE};
+enum AVLResult {AVL_SUCCESS, AVL_FAILURE};
 
 template <class KeyType, class DataType>
 class AVL {
 public:
-    int size;
-
     AVL();
     ~AVL();
     TreeIterator find(KeyType key);
-    AVLResult insert(KeyType key, DataType& data);
+    DataType* get(KeyType key); // return nullptr if not exist
+    AVLResult insert(KeyType key, DataType* data);
     AVLResult remove(KeyType key);
     TreeIterator begin();
     TreeIterator end();
+    int size();
 
     class TreeIterator {
     public:
         TreeIterator() : curr( nullptr ), last( nullptr ) {};
-        DataType& operator*() const;
+        DataType& operator*();
+        DataType* operator->();
         TreeIterator& operator++();
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
+
 
         friend AVL;
 
@@ -33,7 +35,7 @@ public:
 private:
     class TreeNode {
         KeyType key;
-        DataType& data;
+        DataType* data;
         TreeNode *parent, *left, *right;
         int height;
 
@@ -47,6 +49,7 @@ private:
         friend AVL;
     };
     TreeNode *dummyRoot;
+    int size;
 
     static void BalanceSubTree(TreeNode* subTreeRoot);
     static void rotateRight(TreeNode* subTreeRoot);

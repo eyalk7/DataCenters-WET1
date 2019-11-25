@@ -13,7 +13,7 @@ TreeIterator AVL::find(KeyType key) {
     // find HELP!
 }
 
-AVLResult AVL::insert(KeyType key, DataType& data) {
+AVLResult AVL::insert(KeyType key, DataType* data) {
     // parameter checks -> invalid input
 
     // insert HELP!
