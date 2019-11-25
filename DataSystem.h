@@ -3,26 +3,30 @@
 
 #include "DataCenter.h"
 
-enum StatusType { /* by manual */ };
-
+// key class for the trees that are sorted by operation system
 class OSKey {
 public:
-    OSKey()
-    operator<();
-    operator==();
+    OSKey(int serverCount, int dataCenterID);
+    bool operator<(const OSKey& other) const;
+    bool operator==(const OSKey& other) const;
 
 private:
-    int server_count, data_center_id;
-
+    int serverCount, dataCenterID;
 };
 
 class DataSystem {
 public:
-    // all functions in manual (targil)
+    DataSystem();
+    StatusType AddDataCenter(int dataCenterID, int numOfServers);
+    StatusType RemoveDataCenter(int dataCenterID);
+    StatusType RequestServer(int dataCenterID, int serverID, int os, int *assignedID);
+    StatusType FreeServer(int dataCenterID, int serverID);
+    StatusType GetDataCentersByOS(int os, int **dataCenters, int *numOfDataCenters);
+
 private:
     AVL<int, DataCenter> data_centers;
-    AVL<OSKey, int> windows_sorted
-    AVL<OSKey, int> linux_sorted;
+    AVL<OSKey, int> windowsSorted
+    AVL<OSKey, int> linuxSorted;
 
 };
 
