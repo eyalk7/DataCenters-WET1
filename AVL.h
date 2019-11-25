@@ -16,7 +16,7 @@ public:
 
     class TreeIterator {
     public:
-        TreeIterator() : curr( nullptr ), last( nullptr );
+        TreeIterator() : curr( nullptr ), last( nullptr ) {};
         DataType& operator*() const;
         TreeIterator& operator++();
         bool operator<(const TreeIterator& other) const;
