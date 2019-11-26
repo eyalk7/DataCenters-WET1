@@ -1,7 +1,7 @@
 #ifndef DATACENTERS_WET1_AVL_H
 #define DATACENTERS_WET1_AVL_H
 
-enum AVLResult {AVL_SUCCESS, AVL_FAILURE};
+enum AVLResult {AVL_SUCCESS, AVL_FAILURE, AVL_INVALID_INPUT};
 
 template <class KeyType, class DataType>
 class AVL {
@@ -48,7 +48,7 @@ private:
 
         friend AVL;
     };
-    TreeNode *dummyRoot;
+    TreeNode *dummyRoot; // the actual tree is the dummy's **left** subtree
     int size;
 
     static void BalanceSubTree(TreeNode* subTreeRoot);
