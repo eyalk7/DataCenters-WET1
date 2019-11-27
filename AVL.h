@@ -9,8 +9,7 @@ public:
     AVL();
     ~AVL();
     TreeIterator find(KeyType key);
-    DataType* get(KeyType key); // return nullptr if not exist
-    AVLResult insert(KeyType key, DataType* data);
+    AVLResult insert(KeyType key, DataType data);
     AVLResult remove(KeyType key);
     TreeIterator begin();
     TreeIterator end();
@@ -20,7 +19,6 @@ public:
     public:
         TreeIterator() : curr( nullptr ), last( nullptr ) {};
         DataType& operator*();
-        DataType* operator->();
         TreeIterator& operator++();
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
@@ -35,12 +33,12 @@ public:
 private:
     class TreeNode {
         KeyType key;
-        DataType* data;
+        DataType data;
         TreeNode *parent, *left, *right;
         int height;
 
         TreeNode(   KeyType key,
-                    DataType& data,
+                    DataType data,
                     TreeNode* parent = nullptr ) :
                 key( key ), data( data ),
                 parent( parent ), left( nullptr ), right( nullptr ),
