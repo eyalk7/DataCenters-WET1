@@ -44,14 +44,17 @@ private:
                 parent( parent ), left( nullptr ), right( nullptr ),
                 height( 0 ) {};
 
+        int getBalanceFactor() const;
+        bool isLeaf() const;
+
         friend AVL;
     };
     TreeNode *dummyRoot; // the actual tree is the dummy's **left** subtree
     int size;
 
-    static void BalanceSubTree(TreeNode* subTreeRoot);
-    static void rotateRight(TreeNode* subTreeRoot);
-    static void rotateLeft(TreeNode* subTreeRoot);
+    static void BalanceSubTree(TreeNode* root);
+    static void rotateRight(TreeNode* root);
+    static void rotateLeft(TreeNode* root);
 };
 
 #endif //DATACENTERS_WET1_AVL_H

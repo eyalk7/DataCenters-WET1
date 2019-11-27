@@ -22,7 +22,6 @@ TreeIterator AVL::find(KeyType key) {
     // if doesn't exist - return end()
     TreeIterator iter = end();
     while (ptr != nullptr) {
-        last = ptr;
         if (key == ptr->key) {
             iter.curr = ptr;
             iter.last = ptr->parent;
@@ -36,34 +35,71 @@ TreeIterator AVL::find(KeyType key) {
     return iter;
 }
 
-DataType* AVL::get(KeyType key) {
-    if (!find(key))
-        return nullptr;
+AVLResult AVL::insert(KeyType key, DataType data) {
+    TreeNode* last = dummyRoot;
+    TreeNode* ptr = dummyRoot->left;
 
+    // find where the new node should be placed
+    while (ptr != nullptr) {
+        last = ptr;
+        if (key == ptr->key) {
+            // key is already in the tree
+            return AVL_SUCCESS;
+        } else if (key < ptr->key) {
+            ptr = ptr ->left;
+        } else {
+            ptr = ptr->right;
+        }
+    }
 
-}
+    // Add the new node:
+    ptr = new TreeNode(key, data, last);
+    size++;
+    if (key < last->key) {
+        last->left = ptr;
+    } else {
+        last->right = ptr;
+    }
 
-AVLResult AVL::insert(KeyType key, DataType* data) {
-    if (data == nullptr) // || key == nullptr)
-        return AVL_INVALID_INPUT;
+    // balance the tree
+    ptr = ptr->parent;
+    while (ptr != dummyRoot) {
+        BalanceSubTree(ptr);
+        ptr = ptr->parent;
+    }
 
-    // insert HELP!
-    // if you find it SUCCESS
-    // size doesn't change
-
-    // if you dont find it add:
-        // balance tree for each node in the recursive return
-        // SUCCESS
-        // size++;
+    return AVL_SUCCESS;
 }
 
 AVLResult AVL::remove(KeyType key) {
-    // if not exist -> FAILURE (size doesn't change)
+    TreeNode* last = dummyRoot;
+    TreeNode* ptr = dummyRoot->left;
+
+    // look for the node
+    while (key != ptr->key) {
+        last = ptr;
+        if (key < ptr->key) {
+            ptr = ptr ->left;
+        } else {
+            ptr = ptr->right;
+        }
+        if (ptr == nullptr) {
+            // the node doesn't exist in the tree
+            return AVL_SUCCESS;
+        }
+    }
 
     // if leaf -> remove
+    if (ptr->isLeaf()) {
+        ptr = ptr->parent;
+        delete ptr->left;
+        ptr->left = nullptr;
+    }
     // if one son -> change the one son for grandson
     // if two sons -> ...
-    // size--
+    // balance tree
+
+    size--;
 }
 
 TreeIterator AVL::begin() {
@@ -89,21 +125,41 @@ TreeIterator AVL::end() {
 
 // static AVL functions
 
-static void AVL::BalanceSubTree(TreeNode* subTreeRoot) {
+static void AVL::BalanceSubTree(TreeNode* root) {
     if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
         return;
 
-    // calculate balance factor and check [-1,1]
-    // use rotateRight or rotateLeft accordingly
+    int BF = subTreeRoot->getBalanceFactor();
+    if (BF == 2) {
+        int BF_left = root->left->getBalanceFactor();
+        if (BF_left >= 0) {
+            // LL
+            rotateRight(root);
+        } else if (BF_left == -1) {
+            // LR
+            rotateLeft(root->left);
+            rotateRight(root);
+        }
+    } else if (BF == -2) {
+        int BF_right = root->right->getBalanceFactor();
+        if (BF_right <= 0) {
+            // RR
+            rotateLeft(root);
+        } else if (BF_right == 1) {
+            // RL
+            rotateRight(root->right);
+            rotateLeft(root);
+        }
+    }
 }
 
-static void AVL::rotateRight(TreeNode* subTreeRoot) {
+static void AVL::rotateRight(TreeNode* root) {
     if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
         return;
 
 }
 
-static void AVL::rotateLeft(TreeNode* subTreeRoot) {
+static void AVL::rotateLeft(TreeNode* root) {
     if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
         return;
 
@@ -159,4 +215,13 @@ bool TreeIterator::operator<(const TreeIterator& other) const {
 bool TreeIterator::operator==(const TreeIterator& other) const {
     // compare keys with key's operator ==
     return (curr.key == other.curr.key);
+}
+
+//-------------------------TREE NODE FUNCTIONS-------------------------
+int AVL::TreeNode::getBalanceFactor() const {
+    return (left->height - right->height);
+}
+
+bool AVL::TreeNode::isLeaf() const {
+    return (left == nullptr && right == nullptr);
 }
