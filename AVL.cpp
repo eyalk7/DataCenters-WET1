@@ -18,7 +18,7 @@ AVL<KeyType, DataType>::~AVL() {
 }
 
 template <class KeyType, class DataType>
-typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyType key) {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyType key) const {
     TreeNode* ptr = dummyRoot->left;
 
     auto iter = end(); // if doesn't exist - return end()
@@ -27,9 +27,11 @@ typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyTy
         if (key == ptr->key) {
             iter.last = ptr->parent;
             iter.curr = ptr;
-        } else if (key < ptr->key) {
+        }
+        else if (key < ptr->key) {
             ptr = ptr->left;
-        } else {
+        }
+        else {
             ptr = ptr->right;
         }
     }
@@ -47,9 +49,11 @@ AVLResult AVL<KeyType, DataType>::insert(KeyType key, DataType data) {
         last = ptr;
         if (key == ptr->key) {
             return AVL_SUCCESS;	// key is already in the tree
-        } else if (key < ptr->key) {
+        }
+        else if (key < ptr->key) {
             ptr = ptr->left;
-        } else {
+        }
+        else {
             ptr = ptr->right;
         }
     }
@@ -59,7 +63,8 @@ AVLResult AVL<KeyType, DataType>::insert(KeyType key, DataType data) {
     size++;
     if (key < last->key) {
         last->left = ptr;
-    } else {
+    }
+    else {
         last->right = ptr;
     }
 
@@ -71,15 +76,14 @@ AVLResult AVL<KeyType, DataType>::insert(KeyType key, DataType data) {
 
 template <class KeyType, class DataType>
 AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
-    TreeNode* last = dummyRoot;
     TreeNode* ptr = dummyRoot->left;
 
     // look for the node
     while (key != ptr->key) {
-        last = ptr;
         if (key < ptr->key) {
             ptr = ptr->left;
-        } else {
+        }
+        else {
             ptr = ptr->right;
         }
 
@@ -89,25 +93,58 @@ AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
         }
     }
 
-    // if leaf -> remove
-    if (ptr->isLeaf()) {
-        ptr = ptr->parent;
-        delete ptr->left;
-        ptr->left = nullptr;
+    TreeNode* to_delete = ptr;
+
+    bool isLeftSubtree = to_delete->isLeftSubtree();
+
+    TreeNode* son = nullptr;
+    if (to_delete->hasTwoSons()) {
+        // get next node in the inorder traversal
+        TreeIterator iter;
+        iter.curr = to_delete;
+        iter.last = to_delete->left;
+        iter++;
+
+        // swap the two nodes
+        KeyType temp = to_delete.key;
+        DataType temp = to_delete.data;
+
+        to_delete.key = iter.curr->key;
+        to_delete.data = iter.curr->data;
+
+        iter.curr->key = to_delete.key;
+        iter.curr->data = to_delete.data;
+
+        // save the node that has to be removed
+        to_delete = iter.curr;
+    }
+    else if (to_delete->hasSingleSon()) {
+        // find which is the single son
+        son = to_delete->left;
+        if (son == nullptr) {
+            son = to_delete->right;
+        }
+        // set the son's parent to be the removed node's parent
+        son->parent = to_delete->parent;
     }
 
+    if (isLeftSubtree) {
+        to_delete->parent->left = son;
+    }
+    else {
+        to_delete->parent->right = son;
+    }
 
+    TreeNode* to_fix = to_delete->parent;
+    delete to_delete;
+    fixTree(to_fix);
 
-    fixTree(ptr);
-    // if one son -> change the one son for grandson
-    // if two sons -> ...
-    // balance tree
 
     size--;
 }
 
 template <class KeyType, class DataType>
-typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() const {
     // go all the way left
     // curr = dummyRoot->left
     TreeIterator iter;
@@ -122,7 +159,7 @@ typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() {
 }
 
 template <class KeyType, class DataType>
-typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::end() {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::end() const {
     // dummy
     TreeIterator iter;
     iter.curr = dummyRoot;
@@ -134,10 +171,10 @@ int AVL<KeyType, DataType>::getSize() const {
     return size;
 }
 
-//-------------------------PRIVATE (STATIC) AVL FUNCTIONS-------------------------
+//-------------------------PRIVATE AVL FUNCTIONS-------------------------
 
 template <class KeyType, class DataType>
-static void fixTree(TreeNode<KeyType, DataType>* root) {
+static void AVL<KeyType, DataType>::fixTree(TreeNode<KeyType, DataType>* root) {
     while (root != dummyRoot) {
         BalanceSubTree(root);
         root = root->parent;
@@ -155,17 +192,20 @@ static void AVL<KeyType, DataType>::BalanceSubTree(TreeNode<KeyType, DataType>* 
         if (BF_left >= 0) {
             // LL
             rotateRight(root);
-        } else if (BF_left == -1) {
+        }
+        else if (BF_left == -1) {
             // LR
             rotateLeft(root->left);
             rotateRight(root);
         }
-    } else if (BF == -2) {
+    }
+    else if (BF == -2) {
         int BF_right = root->right->getBalanceFactor();
         if (BF_right <= 0) {
             // RR
             rotateLeft(root);
-        } else if (BF_right == 1) {
+        }
+        else if (BF_right == 1) {
             // RL
             rotateRight(root->right);
             rotateLeft(root);
@@ -178,25 +218,17 @@ static void AVL<KeyType, DataType>::rotateRight(TreeNode<KeyType, DataType>* roo
     if (root == nullptr || root == dummyRoot)
         return;
 
-    TreeNode* parent = root->parent; // save subtree's parent
-
-    // set a flag for whether this is a left or right subtree
-    bool isLeftSubtree = false;
-    if (parent->left == root) {
-        isLeftSubtree = true;
-    } else {
-        isLeftSubtree = false;
-    }
-
     // save relevant pointers
+    TreeNode* parent = root->parent;
     TreeNode* B = root;
     TreeNode* A = root->left;
     TreeNode* A_R = A->right;
 
     // change pointers accordingly
-    if (isLeftSubtree) {
+    if (root->isLeftSubtree()) {
         parent->left = A;
-    } else {
+    }
+    else {
         parent->right = A;
     }
     A->parent = parent;
@@ -213,25 +245,17 @@ static void AVL<KeyType, DataType>::rotateLeft(TreeNode<KeyType, DataType>* root
     if (root == nullptr || root == dummyRoot)
         return;
 
-    TreeNode* parent = root->parent; // save subtree's parent
-
-    // set a flag for whether this is a left or right subtree
-    bool isLeftSubtree = false;
-    if (parent->left == root) {
-        isLeftSubtree = true;
-    } else {
-        isLeftSubtree = false;
-    }
-
     // get relevant pointers
+    TreeNode* parent = root->parent;
     TreeNode* A = root;
     TreeNode* B = root->right;
     TreeNode* B_L = B->left;
 
     // change pointers accordingly
-    if (isLeftSubtree) {
+    if (root->isLeftSubtree()) {
         parent->left = B;
-    } else {
+    }
+    else {
         parent->right = B;
     }
     B->parent = parent;
@@ -268,7 +292,8 @@ typename AVL<KeyType, DataType>::TreeIterator& AVL<KeyType, DataType>::TreeItera
             last = curr;
             curr = curr->left;
         }
-    } else {
+    }
+    else {
         // no right subtree exists
         last = curr;
         curr = curr->parent; // go up
@@ -301,7 +326,23 @@ template <class KeyType, class DataType>
 int TreeNode<KeyType, DataType>::getBalanceFactor() const {
     return (left->height - right->height);
 }
+
+template <class KeyType, class DataType>
+bool TreeNode<KeyType, DataType>::isLeftSubtree() const {
+    return (parent->left == this);
+}
+
 template <class KeyType, class DataType>
 bool TreeNode<KeyType, DataType>::isLeaf() const {
     return (left == nullptr && right == nullptr);
+}
+
+template <class KeyType, class DataType>
+bool TreeNode<KeyType, DataType>::hasTwoSons() const {
+    return (left != nullptr && right != nullptr);
+}
+
+template <class KeyType, class DataType>
+bool TreeNode<KeyType, DataType>::hasSingleSon() const {
+    return (!isLeaf() && !hasTwoSons());
 }

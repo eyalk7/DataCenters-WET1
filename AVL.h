@@ -18,7 +18,11 @@ class TreeNode {
             height(0) {};
 
     int getBalanceFactor() const;
+    bool isLeftSubtree() const;
     bool isLeaf() const;
+    bool hasSingleSon() const;
+    bool hasTwoSons() const;
+
 };
 
 template <class KeyType, class DataType>
@@ -41,11 +45,11 @@ public:
 
     AVL();
     ~AVL();
-    TreeIterator find(KeyType key);
+    TreeIterator find(KeyType key) const;
     AVLResult insert(KeyType key, DataType data);
     AVLResult remove(KeyType key);
-    TreeIterator begin();
-    TreeIterator end();
+    TreeIterator begin() const;
+    TreeIterator end() const;
     int getSize() const;
 
 private:
