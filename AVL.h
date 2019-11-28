@@ -53,6 +53,7 @@ private:
     TreeNode<KeyType, DataType>* dummyRoot;
     int size;
 
+    static void fixTree(TreeNode<KeyType, DataType>* root);
     static void BalanceSubTree(TreeNode<KeyType, DataType>* root);
     static void rotateRight(TreeNode<KeyType, DataType>* root);
     static void rotateLeft(TreeNode<KeyType, DataType>* root);
