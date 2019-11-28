@@ -18,7 +18,7 @@ AVL<KeyType, DataType>::~AVL() {
 }
 
 template <class KeyType, class DataType>
-AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyType key) {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyType key) {
     TreeNode* last = dummyRoot;
     TreeNode* ptr = dummyRoot->left;
 
@@ -28,11 +28,9 @@ AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(KeyType key) {
         if (key == ptr->key) {
             iter.curr = ptr;
             iter.last = ptr->parent;
-        }
-        else if (key < ptr->key{
+        } else if (key < ptr->key) {
             ptr = ptr->left;
-        }
-                else {
+        } else {
             ptr = ptr->right;
         }
     }
@@ -51,9 +49,11 @@ AVLResult AVL<KeyType, DataType>::insert(KeyType key, DataType data) {
         if (key == ptr->key) {
             // key is already in the tree
             return AVL_SUCCESS;
-        }	else if (key < ptr->key) {
+        }
+        else if (key < ptr->key) {
             ptr = ptr->left;
-        }	else {
+        }
+        else {
             ptr = ptr->right;
         }
     }
@@ -63,7 +63,8 @@ AVLResult AVL<KeyType, DataType>::insert(KeyType key, DataType data) {
     size++;
     if (key < last->key) {
         last->left = ptr;
-    }	else {
+    }
+    else {
         last->right = ptr;
     }
 
@@ -87,7 +88,8 @@ AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
         last = ptr;
         if (key < ptr->key) {
             ptr = ptr->left;
-        }	else {
+        }
+        else {
             ptr = ptr->right;
         }
 
@@ -111,7 +113,7 @@ AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
 }
 
 template <class KeyType, class DataType>
-AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() {
     // go all the way left
     // curr = dummyRoot->left
     TreeIterator iter;
@@ -120,13 +122,13 @@ AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() {
     while (iter->curr->left != nullptr) {
         iter.curr = iter->curr->left;
     }
-    last = curr->parent;
+    iter.last = iter.curr->parent;
 
     return iter;
 }
 
 template <class KeyType, class DataType>
-AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::end() {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::end() {
     // dummy
     TreeIterator iter;
     iter.curr = dummyRoot;
@@ -142,16 +144,17 @@ int AVL<KeyType, DataType>::getSize() const {
 
 template <class KeyType, class DataType>
 static void AVL<KeyType, DataType>::BalanceSubTree(TreeNode<KeyType, DataType>* root) {
-    if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
+    if (root == nullptr || root == dummyRoot)
         return;
 
-    int BF = subTreeRoot->getBalanceFactor();
+    int BF = root->getBalanceFactor();
     if (BF == 2) {
         int BF_left = root->left->getBalanceFactor();
         if (BF_left >= 0) {
             // LL
             rotateRight(root);
-        }	else if (BF_left == -1) {
+        }
+        else if (BF_left == -1) {
             // LR
             rotateLeft(root->left);
             rotateRight(root);
@@ -173,7 +176,7 @@ static void AVL<KeyType, DataType>::BalanceSubTree(TreeNode<KeyType, DataType>* 
 
 template <class KeyType, class DataType>
 static void AVL<KeyType, DataType>::rotateRight(TreeNode<KeyType, DataType>* root) {
-    if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
+    if (root == nullptr || root == dummyRoot)
         return;
 
     TreeNode* parent = root->parent; // save subtree's parent
@@ -195,7 +198,8 @@ static void AVL<KeyType, DataType>::rotateRight(TreeNode<KeyType, DataType>* roo
     // change pointers accordingly
     if (isLeftSubtree) {
         parent->left = A;
-    } else {
+    }
+    else {
         parent->right = A;
     }
     A->parent = parent;
@@ -209,7 +213,7 @@ static void AVL<KeyType, DataType>::rotateRight(TreeNode<KeyType, DataType>* roo
 
 template <class KeyType, class DataType>
 static void AVL<KeyType, DataType>::rotateLeft(TreeNode<KeyType, DataType>* root) {
-    if (subTreeRoot == nullptr || subTreeRoot == dummyRoot)
+    if (root == nullptr || root == dummyRoot)
         return;
 
     TreeNode* parent = root->parent; // save subtree's parent
@@ -253,7 +257,7 @@ DataType& AVL<KeyType, DataType>::TreeIterator::operator*() const {
 }
 
 template <class KeyType, class DataType>
-AVL<KeyType, DataType>::TreeIterator& AVL<KeyType, DataType>::TreeIterator::operator++() {
+typename AVL<KeyType, DataType>::TreeIterator& AVL<KeyType, DataType>::TreeIterator::operator++(int) {
     // check if reached end before ++
     if (curr == dummyRoot)
         return *this;

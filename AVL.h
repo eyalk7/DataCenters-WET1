@@ -28,7 +28,7 @@ public:
     public:
         TreeIterator() : curr(nullptr), last(nullptr) {};
         DataType& operator*() const;
-        TreeIterator& operator++();
+        TreeIterator& operator++(int);
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
 
@@ -36,7 +36,7 @@ public:
         friend AVL;
 
     private:
-        TreeNode<KeyType, DataType> *curr, *last;
+        TreeNode<KeyType, DataType>* curr, * last;
     };
 
     AVL();
