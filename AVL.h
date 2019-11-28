@@ -22,7 +22,7 @@ struct TreeNode {
 	bool isLeaf() const;
 	bool hasSingleSon() const;
 	bool hasTwoSons() const;
-
+	void updateHeight();
 };
 
 template <class KeyType, class DataType>
@@ -45,9 +45,9 @@ public:
 
 	AVL();
 	~AVL();
-	TreeIterator find(KeyType key) const;
-	AVLResult insert(KeyType key, DataType data);
-	AVLResult remove(KeyType key);
+	TreeIterator find(const KeyType& key) const;
+	AVLResult insert(const KeyType& key, const DataType& data);
+	AVLResult remove(const KeyType& key);
 	TreeIterator begin() const;
 	TreeIterator end() const;
 	int getSize() const;
