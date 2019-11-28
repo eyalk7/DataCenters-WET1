@@ -11,7 +11,35 @@ AVL<KeyType, DataType>::AVL() : size(0) {
 template <class KeyType, class DataType>
 AVL<KeyType, DataType>::~AVL() {
     if (size != 0) {
+        TreeIterator iter = begin();
+        TreeNode* ptr = iter.curr;
+        TreeNode* parent = ptr->parent;
 
+        // PostOrder Traversal to delete all nodes
+        while (ptr != dummyRoot) {
+            while (ptr->left != nullptr) {
+                ptr = ptr->left;
+            }
+
+            while (ptr->right != nullptr) {
+                ptr = ptr->right;
+
+                while (ptr->left != nullptr) {
+                    ptr = ptr->left;
+                }
+            }
+
+            parent = ptr->parent;
+            if (ptr->isLeftSubTree()) {
+                parent->left = nullptr;
+            }
+            else {
+                parent->right = nullptr;
+            }
+            delete ptr;
+
+            ptr = parent;
+        }
     }
 
     delete dummyRoot;
@@ -94,41 +122,55 @@ AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
     }
 
     TreeNode* to_delete = ptr;
-
-    bool isLeftSubtree = to_delete->isLeftSubtree();
-
-    TreeNode* son = nullptr;
     if (to_delete->hasTwoSons()) {
         // get next node in the inorder traversal
         TreeIterator iter;
         iter.curr = to_delete;
         iter.last = to_delete->left;
         iter++;
+        TreeNode* next = iter.curr;
 
-        // swap the two nodes
-        KeyType temp = to_delete.key;
-        DataType temp = to_delete.data;
+        // swap the two nodes {
+        TreeNode* next_R = next->right; // the next node doesn't have a left son
+        TreeNode* next_P = next->parent;
 
-        to_delete.key = iter.curr->key;
-        to_delete.data = iter.curr->data;
+        next->right = to_delete->right;
+        to_delete->right->parent = next;
 
-        iter.curr->key = to_delete.key;
-        iter.curr->data = to_delete.data;
+        next->left = to_delete->left;
+        to_delete->left->parent = next;
 
-        // save the node that has to be removed
-        to_delete = iter.curr;
+        next->parent = to_delete->parent;
+        if (to_delete->isLeftSubtree()) {
+            to_delete->parent->left = next;
+        }
+        else {
+            to_delete->parent->right = next;
+        }
+
+        to_delete->left = nullptr; // the next node doesn't have a left son
+        to_delete->right = next_R;
+        to_delete->parent = next_P;
+
+        next_R->parent = to_delete;
+        next_P->parent = to_delete;
+        //}
     }
-    else if (to_delete->hasSingleSon()) {
+
+    TreeNode* son = nullptr;
+    if (to_delete->hasSingleSon()) {
         // find which is the single son
         son = to_delete->left;
         if (son == nullptr) {
             son = to_delete->right;
         }
+
         // set the son's parent to be the removed node's parent
         son->parent = to_delete->parent;
     }
 
-    if (isLeftSubtree) {
+    // set parent's son (if it's leaf son = nullptr)
+    if (to_delete->isLeftSubtree()) {
         to_delete->parent->left = son;
     }
     else {
@@ -139,8 +181,7 @@ AVLResult AVL<KeyType, DataType>::remove(KeyType key) {
     delete to_delete;
     fixTree(to_fix);
 
-
-    size--;
+    size--; // update tree size
 }
 
 template <class KeyType, class DataType>
