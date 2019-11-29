@@ -417,18 +417,8 @@ void TreeNode<KeyType, DataType>::swap(TreeNode<KeyType, DataType>& A, TreeNode<
     KeyType temp_key = A.key;
     DataType temp_data = A.data;
 
-    /*
-    delete &(A.key);
-    delete &(A.data);
-    */
-
     A.key = B.key;
     A.data = B.data;
-
-    /*
-    delete &(B.key);
-    delete &(B.data);
-    */
 
     B.key = temp_key;
     B.data = temp_data;
