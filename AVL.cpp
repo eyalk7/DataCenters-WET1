@@ -74,16 +74,17 @@ AVLResult AVL<KeyType, DataType>::insert(const KeyType& key, const DataType& dat
         auto ptr = dummyRoot->left;
 
         // find where the new node should be placed
-        while (ptr != nullptr) {
+        while (ptr != nullptr && key != ptr->key) {
             last = ptr;
-            if (key == ptr->key) {
-                return AVL_SUCCESS;    // key is already in the tree
-            } else if (key < ptr->key) {
+            if (key < ptr->key) {
                 ptr = ptr->left;
             } else {
                 ptr = ptr->right;
             }
         }
+
+        if (ptr != nullptr)
+            return AVL_SUCCESS;    // key is already in the tree
 
         // Add the new node:
         ptr = new TreeNode<KeyType, DataType>(key, data, last);
@@ -112,24 +113,12 @@ AVLResult AVL<KeyType, DataType>::remove(const KeyType& key) {
     if (size == 0)
         return AVL_SUCCESS;
 
-    auto ptr = dummyRoot->left;
-
     // look for the node
-    while (key != ptr->key) {
-        if (key < ptr->key) {
-            ptr = ptr->left;
-        }
-        else {
-            ptr = ptr->right;
-        }
+    TreeIterator iter = find(key);
+    if (iter == end())
+        return AVL_SUCCESS; // the node doesn't exist in the tree
 
-        if (ptr == nullptr) {
-            // the node doesn't exist in the tree
-            return AVL_SUCCESS;
-        }
-    }
-
-    auto to_delete = ptr;
+    auto to_delete = iter.curr;
     if (to_delete->hasTwoSons()) {
         // get next node in the inorder traversal
         TreeIterator iter;
