@@ -49,14 +49,8 @@ template <class KeyType, class DataType>
 typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(const KeyType& key) const {
     auto ptr = dummyRoot->left;
 
-    auto iter = end(); // if doesn't exist - return end()
-
-    while (ptr != nullptr) {
-        if (key == ptr->key) {
-            iter.last = ptr->parent;
-            iter.curr = ptr;
-        }
-        else if (key < ptr->key) {
+    while (ptr != nullptr && key != ptr->key) {
+        if (key < ptr->key) {
             ptr = ptr->left;
         }
         else {
@@ -64,6 +58,12 @@ typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(const
         }
     }
 
+    auto iter = end(); // if it doesn't exist - return end()
+
+    if (ptr != nullptr) {
+        iter.last = ptr->parent;
+        iter.curr = ptr;
+    }
     return iter;
 }
 
