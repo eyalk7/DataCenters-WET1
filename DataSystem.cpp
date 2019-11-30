@@ -17,6 +17,10 @@ bool OSKey::operator==(const OSKey& other) const {
     return (serverCount == other.serverCount) && (dataCenterID == other.dataCenterID);
 }
 
+bool OSKey::operator!=(const OSKey& other) const {
+    return !operator==(other);
+}
+
 /*------------------DataSystem class implementation----------------------*/
 DSStatusType DataSystem::AddDataCenter(int dataCenterID, int numOfServers) {
     if (dataCenterID <= 0 || numOfServers <= 0) return DS_INVALID_INPUT;

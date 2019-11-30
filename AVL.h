@@ -73,9 +73,7 @@ private:
 template <class KeyType, class DataType>
 AVL<KeyType, DataType>::AVL() : size(0) {
     // create dummy
-    KeyType dummyKey;
-    DataType dummyData;
-    dummyRoot = new TreeNode<KeyType, DataType>(dummyKey, dummyData);
+    dummyRoot = new TreeNode<KeyType, DataType>(nullptr, nullptr);
 }
 
 template <class KeyType, class DataType>
