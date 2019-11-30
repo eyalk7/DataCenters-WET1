@@ -26,7 +26,7 @@ public:
     StatusType GetDataCentersByOS(OS os, int **dataCenters, int *numOfDataCenters);
 
 private:
-    AVL<int, DataCenter> dataCenters;
+    AVL<int, DataCenter*> dataCenters;
     AVL<OSKey, int> windowsSorted
     AVL<OSKey, int> linuxSorted;
 

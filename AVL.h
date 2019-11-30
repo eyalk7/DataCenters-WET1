@@ -9,8 +9,8 @@ public:
     AVL();
     ~AVL();
     TreeIterator find(KeyType key);
-    DataType* get(KeyType key); // return nullptr if not exist
-    AVLResult insert(KeyType key, DataType* data);
+    DataType get(KeyType key); // return nullptr if not exist
+    AVLResult insert(KeyType key, DataType data);
     AVLResult remove(KeyType key);
     TreeIterator begin();
     TreeIterator end();
