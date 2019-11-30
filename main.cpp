@@ -119,4 +119,6 @@ int main() {
     }
 
     Quit(&DS);
+
+    return 0;
 }

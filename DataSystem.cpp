@@ -17,6 +17,10 @@ bool OSKey::operator==(const OSKey& other) const {
     return (serverCount == other.serverCount) && (dataCenterID == other.dataCenterID);
 }
 
+bool OSKey::operator!=(const OSKey& other) const {
+    return !operator==(other);
+}
+
 /*------------------DataSystem class implementation----------------------*/
 DataSystem::~DataSystem() {
     auto iter = dataCenters.begin();
