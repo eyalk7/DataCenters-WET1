@@ -1,13 +1,11 @@
 #include "DataCenter.h"
+#include "AVL.h"
 
-DataCenter::DataCenter(int numOfServers) {
-    // initialize servers array (c'tor fills automatically)
-    // if bad alloc DataSystem will catch
-    servers = new Server[numOfServers];
-
-    // initialize roots of doubly linked lists
-    winDummy = new ServerNode(-1);
-    linuxDummy = new ServerNode(-1);
+DataCenter::DataCenter(int numOfServers) :
+    servers(new Server[numOfServers]),
+    winDummy(new ServerNode(-1)),
+    linuxDummy(new ServerNode(-1)),
+    linuxNum(numOfServers), winNum(0) {
 
     // connect the linux linked list
     // next: lower in priority, prev: upper in priority
@@ -18,6 +16,7 @@ DataCenter::DataCenter(int numOfServers) {
         iter->next = servers[i].inList;
         servers[i].inList->prev = iter;
         iter = iter->next;
+        iter->idx=i;
     }
     iter->next = linuxDummy;
     linuxDummy->prev = iter;
@@ -32,18 +31,18 @@ DataCenter::~DataCenter() {
     delete servers;
 }
 
-StatusType DataCenter::RequestServer(int serverID, OS os, int *assignedID) {
-    if (serverID > winNum + linuxNum - 1) return INVALID_INPUT; // no such server in DC
-    if (!assignedID) return INVALID_INPUT; // null pointer
+DSStatusType DataCenter::RequestServer(unsigned int serverID, OS os, int *assignedID) {
+    if ((int)serverID > winNum + linuxNum - 1) return DS_INVALID_INPUT; // no such server in DC
+    if (!assignedID) return DS_INVALID_INPUT; // null pointer
 
-    if ( servers[serverID].isUsed ) { // wanted server is used, get other
+    if (servers[serverID].isUsed) { // wanted server is used, get other
         if (os == LINUX) {
             if (linuxDummy->next != linuxDummy) {
                 serverID = linuxDummy->next->idx;
             } else if (winDummy->next != winDummy) {
                 serverID = winDummy->next->idx;
             } else {
-                return FAILURE; // no server available
+                return DS_FAILURE; // no server available
             }
         } else { // os == WINDOWS
             if (winDummy->next != winDummy) {
@@ -51,7 +50,7 @@ StatusType DataCenter::RequestServer(int serverID, OS os, int *assignedID) {
             } else if (linuxDummy->next != linuxDummy) {
                 serverID = linuxDummy->next->idx;
             } else {
-                return FAILURE; // no server available
+                return DS_FAILURE; // no server available
             }
         }
     }
@@ -65,7 +64,7 @@ StatusType DataCenter::RequestServer(int serverID, OS os, int *assignedID) {
         } else { // os == WINDOWS
             winNum++;
             linuxNum--;
-            servers[serverID].os == WINDOWS;
+            servers[serverID].os = WINDOWS;
         }
     }
 
@@ -81,12 +80,12 @@ StatusType DataCenter::RequestServer(int serverID, OS os, int *assignedID) {
     // return serverID in assignedID
     *assignedID = serverID;
 
-    return SUCCESS;
+    return DS_SUCCESS;
 }
 
-StatusType DataCenter::FreeServer(int serverID) {
-    if (serverID > winNum + linuxNum - 1) return INVALID_INPUT; // no such server in DC
-    if (!servers[serverID].isUsed) return FAILURE; // the server is already free
+DSStatusType DataCenter::FreeServer(unsigned int serverID) {
+    if ((int)serverID > winNum + linuxNum - 1) return DS_INVALID_INPUT; // no such server in DC
+    if (!servers[serverID].isUsed) return DS_FAILURE; // the server is already free
 
     // insert node in end of list
     ServerNode* lastInList;
@@ -104,6 +103,7 @@ StatusType DataCenter::FreeServer(int serverID) {
 
     // mark as unused
     servers[serverID].isUsed = false;
+    return DS_SUCCESS;
 }
 
 int DataCenter::GetLinuxNum() const {
@@ -114,7 +114,7 @@ int DataCenter::GetWinNum() const {
     return winNum;
 }
 
-static void DeleteServersList(ServerNode* root) {
+void DataCenter::DeleteServersList(ServerNode* root) {
     ServerNode* iter = root->next;
     while (iter == root) {
         auto to_delete = iter;

@@ -2,44 +2,42 @@
 #define DATACENTERS_WET1_DATACENTER_H
 
 typedef enum {
-    SUCCESS = 0,
-    FAILURE = -1,
-    ALLOCATION_ERROR = -2,
-    INVALID_INPUT = -3
-} StatusType;
+    DS_SUCCESS = 0,
+    DS_FAILURE = -1,
+    DS_ALLOCATION_ERROR = -2,
+    DS_INVALID_INPUT = -3
+} DSStatusType;
 enum OS {LINUX, WINDOWS};
 
 class DataCenter {
 public:
-    DataCenter(int numOfServers);
+    explicit DataCenter(int numOfServers);
     ~DataCenter();
-    StatusType RequestServer(int serverID, OS os, int *assignedID);
-    StatusType FreeServer(int serverID);
+    DSStatusType RequestServer(unsigned int serverID, OS os, int *assignedID);
+    DSStatusType FreeServer(unsigned int serverID);
     int GetLinuxNum() const;
     int GetWinNum() const;
 
 private:
-    class ServerNode {
-    public:
-        int idx;
+    struct ServerNode {
+        unsigned int idx;
         ServerNode *next, *prev;
 
-        ServerNode(int idx) :
+        explicit ServerNode(int idx) :
             idx( idx ), next( nullptr ), prev( nullptr ) {};
     };
 
-    class Server {
-    public:
+    struct Server {
         ServerNode* inList;
         bool isUsed;
         OS os;
 
         Server() :
-            inList( new ServerNode(i) ), isUsed( false ), os( LINUX ) {};
+            inList( new ServerNode(0) ), isUsed( false ), os( LINUX ) {};
     };
 
     Server* servers;
-    ServerNode *winDummy, *linuxDummy;
+    ServerNode* winDummy, * linuxDummy;
     int linuxNum, winNum;
 
     static void DeleteServersList(ServerNode* root);
