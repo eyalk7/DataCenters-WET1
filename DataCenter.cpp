@@ -28,8 +28,14 @@ DataCenter::DataCenter(int numOfServers) :
 
 DataCenter::~DataCenter() {
     // delete all nodes in linked lists
-    DeleteServersList(linuxDummy);
-    DeleteServersList(winDummy);
+    int numOfServers = linuxNum + winNum;
+    for (int i=0; i<numOfServers; i++) {
+        delete servers[i].inList;
+    }
+
+    // delete dummy nodes
+    delete linuxDummy;
+    delete winDummy;
 
     // delete array
     delete servers;
@@ -116,14 +122,4 @@ int DataCenter::GetLinuxNum() const {
 
 int DataCenter::GetWinNum() const {
     return winNum;
-}
-
-void DataCenter::DeleteServersList(ServerNode* root) {
-    ServerNode* iter = root->next;
-    while (iter != root) {
-        auto to_delete = iter;
-        iter = iter->next;
-        delete to_delete;
-    }
-    delete root;
 }

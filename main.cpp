@@ -72,6 +72,7 @@ int main() {
         cout << dataCenters1[i] << " ";
     }
     cout << endl;
+    free(dataCenters1);
 
     cout << "AddDataCenter: ";
     if (AddDataCenter(DS, 789, 10) == SUCCESS) {
@@ -93,6 +94,7 @@ int main() {
         cout << dataCenters2[i] << " ";
     }
     cout << endl;
+    free(dataCenters2);
 
     cout << "RemoveDataCenter: ";
     if (RemoveDataCenter(DS, 123) == SUCCESS){

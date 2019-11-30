@@ -39,8 +39,6 @@ private:
     Server* servers;
     ServerNode* winDummy, * linuxDummy;
     int linuxNum, winNum;
-
-    static void DeleteServersList(ServerNode* root);
 };
 
 
