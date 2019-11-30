@@ -120,7 +120,7 @@ int DataCenter::GetWinNum() const {
 
 void DataCenter::DeleteServersList(ServerNode* root) {
     ServerNode* iter = root->next;
-    while (iter == root) {
+    while (iter != root) {
         auto to_delete = iter;
         iter = iter->next;
         delete to_delete;

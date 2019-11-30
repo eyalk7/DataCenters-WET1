@@ -26,6 +26,7 @@ DataSystem::~DataSystem() {
     auto iter = dataCenters.begin();
     while (iter != dataCenters.end()) {
         delete( *iter );
+        iter++;
     }
 }
 
