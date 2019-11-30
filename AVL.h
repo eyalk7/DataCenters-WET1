@@ -37,7 +37,7 @@ public:
         const TreeIterator& operator++(int);
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
-        bool operator!=(const TreeIterator& other) const {return !((*this)==other);}
+        bool operator!=(const TreeIterator& other) const;
 
         friend AVL;
 
@@ -413,6 +413,12 @@ template <class KeyType, class DataType>
 bool AVL<KeyType, DataType>::TreeIterator::operator==(const TreeIterator& other) const {
     return (curr == other.curr);
 }
+
+template <class KeyType, class DataType>
+bool AVL<KeyType, DataType>::TreeIterator::operator!=(const TreeIterator& other) const {
+    return !operator==(other);
+}
+
 
 //-------------------------TREE NODE FUNCTIONS-------------------------
 template <class KeyType, class DataType>

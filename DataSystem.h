@@ -12,7 +12,7 @@ struct OSKey {
 
     bool operator<(const OSKey& other) const;
     bool operator==(const OSKey& other) const;
-    bool operator!=(const OSKey& other) const {return !((*this)==other);}
+    bool operator!=(const OSKey& other) const;
 };
 
 class DataSystem {
