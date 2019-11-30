@@ -18,6 +18,13 @@ bool OSKey::operator==(const OSKey& other) const {
 }
 
 /*------------------DataSystem class implementation----------------------*/
+DataSystem::~DataSystem() {
+    auto iter = dataCenters.begin();
+    while (iter != dataCenters.end()) {
+        delete( *iter );
+    }
+}
+
 DSStatusType DataSystem::AddDataCenter(int dataCenterID, int numOfServers) {
     if (dataCenterID <= 0 || numOfServers <= 0) return DS_INVALID_INPUT;
 
@@ -119,11 +126,11 @@ DSStatusType DataSystem::GetDataCentersByOS(OS os, int** dataCentersArr, int* nu
     // inorder traversal on the OS tree to fill the array
     int j = 0;
     if (os == LINUX) {
-        for (auto i=linuxSorted.begin(); i < linuxSorted.end(); i++, j++) {
+        for (auto i=linuxSorted.begin(); i != linuxSorted.end(); i++, j++) {
             (*dataCentersArr)[j] = *i;
         }
     } else {
-        for (auto i=windowsSorted.begin(); i < windowsSorted.end(); i++, j++) {
+        for (auto i=windowsSorted.begin(); i != windowsSorted.end(); i++, j++) {
             (*dataCentersArr)[j] = *i;
         }
     }

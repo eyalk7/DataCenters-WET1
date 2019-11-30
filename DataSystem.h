@@ -7,16 +7,18 @@
 struct OSKey {
     int serverCount, dataCenterID;
 
-    OSKey(int serverCount, int dataCenterID) :
+    explicit OSKey(int serverCount = 0, int dataCenterID = 0) :
         serverCount(serverCount), dataCenterID(dataCenterID) {};
 
     bool operator<(const OSKey& other) const;
     bool operator==(const OSKey& other) const;
+    bool operator!=(const OSKey& other) const {return !((*this)==other);}
 };
 
 class DataSystem {
 public:
     DataSystem() = default;
+    ~DataSystem();
     DSStatusType AddDataCenter(int dataCenterID, int numOfServers);
     DSStatusType RemoveDataCenter(int dataCenterID);
     DSStatusType RequestServer(int dataCenterID, unsigned int serverID, OS os, int* assignedID);

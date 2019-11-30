@@ -7,6 +7,10 @@ DataCenter::DataCenter(int numOfServers) :
     linuxDummy(new ServerNode(-1)),
     linuxNum(numOfServers), winNum(0) {
 
+    // connect the windows linked list
+    winDummy->next=winDummy;
+    winDummy->prev=winDummy;
+
     // connect the linux linked list
     // next: lower in priority, prev: upper in priority
     // dummy node's next: first in priority
