@@ -1,8 +1,7 @@
 #include <new>
 #include <cstdlib>
-#include "DataSystem.h"
 #include "AVL.h"
-
+#include "DataSystem.h"
 
 /*------------------ OSKey class implementation ----------------------*/
 bool OSKey::operator<(const OSKey& other) const {
