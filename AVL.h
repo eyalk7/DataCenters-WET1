@@ -37,6 +37,7 @@ public:
         const TreeIterator& operator++(int);
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
+        bool operator!=(const TreeIterator& other) const {return !((*this)==other);}
 
         friend AVL;
 
@@ -72,10 +73,7 @@ private:
 
 template <class KeyType, class DataType>
 AVL<KeyType, DataType>::AVL() : size(0) {
-    // create dummy
-    KeyType dummyKey;
-    DataType dummyData;
-    dummyRoot = new TreeNode<KeyType, DataType>(dummyKey, dummyData);
+    dummyRoot = new TreeNode<KeyType, DataType>(KeyType(), DataType());
 }
 
 template <class KeyType, class DataType>
