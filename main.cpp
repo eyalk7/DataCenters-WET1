@@ -36,4 +36,6 @@ int main() {
     AddDataCenter(DS, 123, -5); // Invalid input is checked first
 
     Quit(&DS);
+
+    return 0;
 }
