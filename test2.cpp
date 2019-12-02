@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <limits>
 #include "library1.h"
 
 using std::vector;
@@ -17,6 +18,7 @@ void printRes(StatusType res) {
 
 int main() {
     vector<int> assignedIDs(10000000);
+    int numOfServers = 10, numOfFarms = 1000000;
 
     // Init
     void* DS = Init();
@@ -24,48 +26,60 @@ int main() {
     cout << endl;
 
     // AddDataCenter
-    cout << "New data center with 500000 servers:" << endl;
-    printRes( AddDataCenter(DS,123,500000) );
+    cout << "add New " << numOfFarms << " data centers with " << numOfServers << " servers:" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = AddDataCenter(DS,i,numOfServers);
+        if (res != SUCCESS) printRes(res);
+    }
     cout << endl;
 
     // RequestServer
     int dummy;
-    cout << "request first 250000 servers as windows";
-    for (int i=0; i<250000; i++) {
-        auto res = RequestServer(DS, 123, i, 1, &dummy);
-        if (res != SUCCESS) printRes(res);
+    cout << "request first " << numOfServers/2 << " servers as windows" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        for (int j = 0; j < numOfServers / 2; j++) {
+            auto res = RequestServer(DS, i, j, 1, &dummy);
+            if (res != SUCCESS) printRes(res);
+        }
     }
-    cout << "request all the rest as linux";
-    for (int i=250000; i<500000; i++) {
-        auto res = RequestServer(DS, 123, i, 0, &dummy);
-        if (res != SUCCESS) printRes(res);
+
+    cout << "request all the rest as linux" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        for (int j = numOfServers / 2; j < numOfServers; j++) {
+            auto res = RequestServer(DS, i, j, 0, &dummy);
+            if (res != SUCCESS) printRes(res);
+        }
     }
     cout << endl;
 
     // FreeServer
     cout << "free all even numbered servers" << endl;
-    for (int i=0; i<500000; i+=2) {
-        auto res = FreeServer(DS, 123, i);
-        if (res != SUCCESS) printRes(res);
+    for (int i=1; i<numOfFarms; i++) {
+        for (int j = 0; j < numOfServers; j += 2) {
+            auto res = FreeServer(DS, i, j);
+            if (res != SUCCESS) printRes(res);
+        }
     }
     cout << endl;
 
     // RequestServer
-    cout << "Assigns 250000 servers as windows" << endl;
-    for (int i=0; i<250000; i++) {
-        auto res = RequestServer(DS, 123, i, 1, &assignedIDs[i]);
-        if (res != SUCCESS) printRes(res);
-        cout << assignedIDs[i] << endl;
+    cout << "Assigns " << numOfServers/2 << " servers as windows" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        for (int j=0; j<numOfServers/2; j++) {
+            auto res = RequestServer(DS, i, j, 1, &assignedIDs[i]);
+            if (res != SUCCESS) printRes(res);
+        }
     }
+/*
 
     // Sorted by Windows
     int* dataCenters1;
     int numOfDataCenters1;
     cout << "GetDataCentersByOS: (windows)" << endl;
     printRes( GetDataCentersByOS(DS, 1, &dataCenters1, &numOfDataCenters1) );
-    for (int i=0; i<numOfDataCenters1; i++) {
-        cout << dataCenters1[i] << endl;
-    }
+//    for (int i=0; i<numOfDataCenters1; i++) {
+//        cout << dataCenters1[i] << endl;
+//    }
     cout << endl;
     free(dataCenters1);
     cout << endl;
@@ -75,16 +89,20 @@ int main() {
     int numOfDataCenters2;
     cout << "GetDataCentersByOS: (linux)" << endl;
     printRes( GetDataCentersByOS(DS, 0, &dataCenters2, &numOfDataCenters2) );
-    for (int i=0; i<numOfDataCenters2; i++) {
-        cout << dataCenters2[i] << " ";
-    }
+//    for (int i=0; i<numOfDataCenters2; i++) {
+//        cout << dataCenters2[i] << " ";
+//    }
     cout << endl;
     free(dataCenters2);
     cout << endl;
+*/
 
     // RemoveDataCenter
     cout << "RemoveDataCenter: " << endl;
-    printRes( RemoveDataCenter(DS, 123) );
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = RemoveDataCenter(DS, i);
+        if (res != SUCCESS) printRes(res);
+    }
     cout << endl;
 
     Quit(&DS);

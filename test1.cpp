@@ -123,5 +123,33 @@ int main() {
 
     Quit(&DS);
 
+/*
+    AVL<int, int> tree;
+
+    tree.insert(1, 1);
+    tree.insert(0, 0);
+    tree.insert(2, 2);
+    tree.insert(6, 6);
+    tree.insert(4, 4);
+    tree.insert(10, 10);
+    tree.insert(18, 18);
+    tree.insert(13, 13);
+
+    //tree.remove(4);
+
+    AVL<int, int>::TreeIterator iter = tree.find(8);
+    if (iter == tree.end())
+        cout << "NOT FOUND - 8";
+    else cout << "FOUND - 8";
+
+    cout << endl;
+
+    iter = tree.find(6);
+    if (iter == tree.end())
+        cout << "NOT FOUND - 6";
+    else cout << "FOUND - 6";
+
+    tree.printTree();
+    */
     return 0;
 }

@@ -1,6 +1,10 @@
 #ifndef DATACENTERS_WET1_AVL_H
 #define DATACENTERS_WET1_AVL_H
 
+#include <iostream>
+using namespace std;
+#define COUNT 10 // used in tree print function
+
 enum AVLResult { AVL_SUCCESS, AVL_FAILURE, AVL_INVALID_INPUT, AVL_ALREADY_EXIST, AVL_NOT_EXIST };
 
 template <class KeyType, class DataType>
@@ -55,6 +59,7 @@ public:
     TreeIterator end() const;
     int getSize() const;
 
+    void printTree();
 
 private:
     // the actual tree is the dummy's left subtree
@@ -65,6 +70,7 @@ private:
     void BalanceSubTree(TreeNode<KeyType, DataType>* root);
     void rotateRight(TreeNode<KeyType, DataType>* root);
     void rotateLeft(TreeNode<KeyType, DataType>* root);
+    static void printTreeHelp(TreeNode<KeyType, DataType>* root, int space);
 };
 
 ///-------------------------GENERIC FUNCTIONS' IMPLEMENTATIONS-------------------------
@@ -253,6 +259,11 @@ int AVL<KeyType, DataType>::getSize() const {
     return size;
 }
 
+template<class KeyType, class DataType>
+void AVL<KeyType, DataType>::printTree() {
+    printTreeHelp(dummyRoot->left, 0);
+}
+
 //-------------------------PRIVATE AVL FUNCTIONS-------------------------
 
 template <class KeyType, class DataType>
@@ -360,6 +371,29 @@ void AVL<KeyType, DataType>::rotateLeft(TreeNode<KeyType, DataType>* root) {
 
     A->updateHeight();
     B->updateHeight();
+}
+
+template<class KeyType, class DataType>
+void AVL<KeyType, DataType>::printTreeHelp(TreeNode<KeyType, DataType>* root, int space) {
+    // Base case
+    if (root == nullptr)
+        return;
+
+    // Increase distance between levels
+    space += COUNT;
+
+    // Process right child first
+    printTreeHelp(root->right, space);
+
+    // Print current node after space
+    // count
+    cout << endl;
+    for (int i = COUNT; i < space; i++)
+        cout << " ";
+    cout << root->key << "\n";
+
+    // Process left child
+    printTreeHelp(root->left, space);
 }
 
 //-------------------------AVL TREE ITERATOR FUNCTIONS-------------------------
