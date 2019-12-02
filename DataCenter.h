@@ -28,16 +28,16 @@ private:
     };
 
     struct Server {
-        ServerNode* inList;
+        ServerNode* index_node;
         bool isUsed;
         OS os;
 
         Server() :
-            inList( new ServerNode(0) ), isUsed( false ), os( LINUX ) {};
+            index_node( new ServerNode(0) ), isUsed( false ), os( LINUX ) {};
     };
 
     Server* servers;
-    ServerNode* winDummy, * linuxDummy;
+    ServerNode* winDummy, *linuxDummy;
     int linuxNum, winNum;
 };
 

@@ -5,7 +5,7 @@
 
 /*------------------ OSKey class implementation ----------------------*/
 bool OSKey::operator<(const OSKey& other) const {
-    // if same num of servers, than one with smaller ID come first in INORDER traversal
+    // if same num of servers, then one with smaller ID comes first in the INORDER traversal
     if (serverCount == other.serverCount)
         return dataCenterID < other.dataCenterID;
 
@@ -23,10 +23,8 @@ bool OSKey::operator!=(const OSKey& other) const {
 
 /*------------------DataSystem class implementation----------------------*/
 DataSystem::~DataSystem() {
-    auto iter = dataCenters.begin();
-    while (iter != dataCenters.end()) {
-        delete( *iter );
-        iter++;
+    for (auto iter = dataCenters.begin(); iter != dataCenters.end(); iter++) {
+        delete (*iter);
     }
 }
 
@@ -87,8 +85,8 @@ DSStatusType DataSystem::RequestServer(int dataCenterID, unsigned int serverID, 
     OSKey winTreeKeyBefore(dataCenterPtr->GetWinNum(), dataCenterID);
 
     // request the server from the data center
-    auto res = dataCenterPtr->RequestServer(serverID, os, assignedID);
-    if (res != DS_SUCCESS) return res;
+    auto status = dataCenterPtr->RequestServer(serverID, os, assignedID);
+    if (status != DS_SUCCESS) return status;
 
     // Create OSKey from the new data
     OSKey linuxTreeKeyAfter(dataCenterPtr->GetLinuxNum(), dataCenterID);

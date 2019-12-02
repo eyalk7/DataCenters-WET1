@@ -8,8 +8,7 @@ using namespace std;
 enum AVLResult { AVL_SUCCESS, AVL_FAILURE, AVL_INVALID_INPUT, AVL_ALREADY_EXIST, AVL_NOT_EXIST };
 
 template <class KeyType, class DataType>
-class TreeNode {
-public:
+struct TreeNode {
     KeyType key;
     DataType data;
     TreeNode* parent, * left, * right;

@@ -17,8 +17,8 @@ DataCenter::DataCenter(int numOfServers) :
     // dummy node's prev: last in priority
     ServerNode* iter = linuxDummy;
     for (int i=0; i<numOfServers; i++) {
-        iter->next = servers[i].inList;
-        servers[i].inList->prev = iter;
+        iter->next = servers[i].index_node;
+        servers[i].index_node->prev = iter;
         iter = iter->next;
         iter->idx=i;
     }
@@ -30,7 +30,7 @@ DataCenter::~DataCenter() {
     // delete all nodes in linked lists
     int numOfServers = linuxNum + winNum;
     for (int i=0; i<numOfServers; i++) {
-        delete servers[i].inList;
+        delete servers[i].index_node;
     }
 
     // delete dummy nodes
@@ -79,8 +79,8 @@ DSStatusType DataCenter::RequestServer(unsigned int serverID, OS os, int *assign
     }
 
     // remove from list
-    auto nextServer = servers[serverID].inList->next;
-    auto prevServer = servers[serverID].inList->prev;
+    auto nextServer = servers[serverID].index_node->next;
+    auto prevServer = servers[serverID].index_node->prev;
     prevServer->next = nextServer;
     nextServer->prev = prevServer;
 
@@ -101,15 +101,15 @@ DSStatusType DataCenter::FreeServer(unsigned int serverID) {
     ServerNode* lastInList;
     if (servers[serverID].os == LINUX) {
         lastInList = linuxDummy->prev;
-        servers[serverID].inList->next = linuxDummy;
-        linuxDummy->prev = servers[serverID].inList;
+        servers[serverID].index_node->next = linuxDummy;
+        linuxDummy->prev = servers[serverID].index_node;
     } else { // os == WINDOWS
         lastInList = winDummy->prev;
-        servers[serverID].inList->next = winDummy;
-        winDummy->prev = servers[serverID].inList;
+        servers[serverID].index_node->next = winDummy;
+        winDummy->prev = servers[serverID].index_node;
     }
-    lastInList->next = servers[serverID].inList;
-    servers[serverID].inList->prev = lastInList;
+    lastInList->next = servers[serverID].index_node;
+    servers[serverID].index_node->prev = lastInList;
 
     // mark as unused
     servers[serverID].isUsed = false;
