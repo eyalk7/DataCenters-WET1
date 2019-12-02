@@ -17,7 +17,7 @@ void printRes(StatusType res) {
 }
 
 int main() {
-    int numOfServers = 100000, numOfFarms = 1000;
+    int numOfServers = 1000, numOfFarms = 1000;
 
     // Init
     void* DS = Init();
@@ -84,40 +84,13 @@ int main() {
     }
     cout << endl;
 
-/*
-
-    // Sorted by Windows
-    int* dataCenters1;
-    int numOfDataCenters1;
-    cout << "GetDataCentersByOS: (windows)" << endl;
-    printRes( GetDataCentersByOS(DS, 1, &dataCenters1, &numOfDataCenters1) );
-//    for (int i=0; i<numOfDataCenters1; i++) {
-//        cout << dataCenters1[i] << endl;
-//    }
-    cout << endl;
-    free(dataCenters1);
-    cout << endl;
-
-    // Sorted by Linux
-    int* dataCenters2;
-    int numOfDataCenters2;
-    cout << "GetDataCentersByOS: (linux)" << endl;
-    printRes( GetDataCentersByOS(DS, 0, &dataCenters2, &numOfDataCenters2) );
-//    for (int i=0; i<numOfDataCenters2; i++) {
-//        cout << dataCenters2[i] << " ";
-//    }
-    cout << endl;
-    free(dataCenters2);
-    cout << endl;
-*/
-
-    // RemoveDataCenter
+ /*   // RemoveDataCenter
     cout << "RemoveDataCenter: " << endl;
     for (int i=1; i<numOfFarms; i++) {
         auto res = RemoveDataCenter(DS, i);
         if (res != SUCCESS) printRes(res);
     }
-    cout << endl;
+    cout << endl;*/
 
     Quit(&DS);
     cout << "finished";
