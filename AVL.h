@@ -55,7 +55,6 @@ public:
     int getSize() const;
 
 
-
 private:
     // the actual tree is the dummy's left subtree
     TreeNode<KeyType, DataType>* dummyRoot;
@@ -233,7 +232,6 @@ AVLResult AVL<KeyType, DataType>::remove(const KeyType& key) {
 template <class KeyType, class DataType>
 typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::begin() const {
     // go all the way left
-    // curr = dummyRoot->left
     TreeIterator iter;
     iter.curr = dummyRoot;
 
