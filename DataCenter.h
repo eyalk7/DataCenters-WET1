@@ -7,6 +7,7 @@ typedef enum {
     DS_ALLOCATION_ERROR = -2,
     DS_INVALID_INPUT = -3
 } DSStatusType;
+
 enum OS {LINUX, WINDOWS};
 
 class DataCenter {
@@ -20,11 +21,11 @@ public:
 
 private:
     struct ServerNode {
-        unsigned int idx;
+        unsigned int server_id; // the index of the server in the server array
         ServerNode *next, *prev;
 
-        explicit ServerNode(int idx) :
-            idx( idx ), next( nullptr ), prev( nullptr ) {};
+        explicit ServerNode(int server_id) :
+            server_id( server_id ), next( nullptr ), prev( nullptr ) {};
     };
 
     struct Server {

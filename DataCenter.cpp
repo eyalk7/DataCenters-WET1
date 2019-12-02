@@ -20,7 +20,7 @@ DataCenter::DataCenter(int numOfServers) :
         iter->next = servers[i].index_node;
         servers[i].index_node->prev = iter;
         iter = iter->next;
-        iter->idx=i;
+        iter->server_id=i;
     }
     iter->next = linuxDummy;
     linuxDummy->prev = iter;
@@ -45,74 +45,83 @@ DSStatusType DataCenter::RequestServer(unsigned int serverID, OS os, int *assign
     if ((int)serverID > winNum + linuxNum - 1) return DS_INVALID_INPUT; // no such server in DC
     if (!assignedID) return DS_INVALID_INPUT; // null pointer
 
-    if (servers[serverID].isUsed) { // wanted server is used, get other
-        if (os == LINUX) {
-            if (linuxDummy->next != linuxDummy) {
-                serverID = linuxDummy->next->idx;
-            } else if (winDummy->next != winDummy) {
-                serverID = winDummy->next->idx;
-            } else {
-                return DS_FAILURE; // no server available
-            }
-        } else { // os == WINDOWS
-            if (winDummy->next != winDummy) {
-                serverID = winDummy->next->idx;
-            } else if (linuxDummy->next != linuxDummy) {
-                serverID = linuxDummy->next->idx;
-            } else {
-                return DS_FAILURE; // no server available
-            }
+    // if the wanted server is used
+    if (servers[serverID].isUsed) {
+        // get the required pointers based on the given OS
+        ServerNode *os_dummy = linuxDummy;
+        ServerNode *other_os_dummy = winDummy;
+        if (os == WINDOWS) {
+            os_dummy = winDummy;
+            other_os_dummy = linuxDummy;
+        }
+
+        // change the server ID we want accordingly
+        if (os_dummy->next != os_dummy) {
+            // try to get first free server from the requested OS
+            serverID = os_dummy->next->server_id;
+        } else if (other_os_dummy->next != other_os_dummy) {
+            // else, try to get first free server from the other OS
+            serverID = other_os_dummy->next->server_id;
+        } else {
+            return DS_FAILURE;  // no servers available
         }
     }
 
-    // change OS if needed
-    if (os != servers[serverID].os) {
+    // get the server we're going to return
+    Server& server = servers[serverID];
+
+    // update OS and server counts accordingly
+    if (os != server.os) {
         if (os == LINUX) {
             linuxNum++;
             winNum--;
-            servers[serverID].os = LINUX;
         } else { // os == WINDOWS
             winNum++;
             linuxNum--;
-            servers[serverID].os = WINDOWS;
         }
     }
+    server.os = os;
 
-    // remove from list
-    auto nextServer = servers[serverID].index_node->next;
-    auto prevServer = servers[serverID].index_node->prev;
+    // remove server's node from "free servers" list
+    auto nextServer = server.index_node->next;
+    auto prevServer = server.index_node->prev;
     prevServer->next = nextServer;
     nextServer->prev = prevServer;
+    server.index_node->next = nullptr;
+    server.index_node->prev = nullptr;
 
-    // set used
-    servers[serverID].isUsed = true;
+    // set as used
+    server.isUsed = true;
 
-    // return serverID in assignedID
+    // return the server's ID in assignedID
     *assignedID = serverID;
 
     return DS_SUCCESS;
 }
 
 DSStatusType DataCenter::FreeServer(unsigned int serverID) {
-    if ((int)serverID > winNum + linuxNum - 1) return DS_INVALID_INPUT; // no such server in DC
+    if ((int) serverID > winNum + linuxNum - 1) return DS_INVALID_INPUT; // no such server in DC
     if (!servers[serverID].isUsed) return DS_FAILURE; // the server is already free
 
-    // insert node in end of list
-    ServerNode* lastInList;
-    if (servers[serverID].os == LINUX) {
-        lastInList = linuxDummy->prev;
-        servers[serverID].index_node->next = linuxDummy;
-        linuxDummy->prev = servers[serverID].index_node;
-    } else { // os == WINDOWS
-        lastInList = winDummy->prev;
-        servers[serverID].index_node->next = winDummy;
-        winDummy->prev = servers[serverID].index_node;
-    }
-    lastInList->next = servers[serverID].index_node;
-    servers[serverID].index_node->prev = lastInList;
+    // get the server we're going to free and it's corresponding node
+    Server &server = servers[serverID];
+    ServerNode* node = server.index_node;
 
-    // mark as unused
-    servers[serverID].isUsed = false;
+    // get the pointer for the "free servers" list of the given OS
+    ServerNode *dummy = linuxDummy;
+    if (server.os == WINDOWS)
+        dummy = winDummy;
+
+    // insert the server's node at end of the list
+    ServerNode *lastInList = dummy->prev;
+    node->next = dummy;
+    dummy->prev = node;
+    lastInList->next = node;
+    node->prev = lastInList;
+
+    // mark server as unused
+    server.isUsed = false;
+
     return DS_SUCCESS;
 }
 

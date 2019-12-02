@@ -81,24 +81,27 @@ DSStatusType DataSystem::RequestServer(int dataCenterID, unsigned int serverID, 
     if (iter == dataCenters.end()) return DS_FAILURE; // no such DataCenter
     auto dataCenterPtr = *iter;
 
-    OSKey linuxTreeKeyBefore(dataCenterPtr->GetLinuxNum(), dataCenterID);
-    OSKey winTreeKeyBefore(dataCenterPtr->GetWinNum(), dataCenterID);
+    OSKey linuxKey(dataCenterPtr->GetLinuxNum(), dataCenterID);
+    OSKey windowsKey(dataCenterPtr->GetWinNum(), dataCenterID);
 
     // request the server from the data center
     auto status = dataCenterPtr->RequestServer(serverID, os, assignedID);
     if (status != DS_SUCCESS) return status;
 
-    // Create OSKey from the new data
-    OSKey linuxTreeKeyAfter(dataCenterPtr->GetLinuxNum(), dataCenterID);
-    OSKey winTreeKeyAfter(dataCenterPtr->GetWinNum(), dataCenterID);
+    // remove from the two OS avl trees the old OSkeys
+    linuxSorted.remove(linuxKey);
+    windowsSorted.remove(windowsKey);
 
-    // remove from the two OS avl trees the old oskey and insert the new ones
-    linuxSorted.remove(linuxTreeKeyBefore);
-    windowsSorted.remove(winTreeKeyBefore);
+    // update the OSKeys' data
+    linuxKey.serverCount(dataCenterPtr->GetLinuxNum());
+    linuxKey.dataCenterID = dataCenterID;
+    windowsKey.serverCount(dataCenterPtr->GetWinNum());
+    windowsKey.dataCenterID = dataCenterID;
 
+    // insert the updated OSkeys to the OS avl trees
     try {
-        linuxSorted.insert(linuxTreeKeyAfter, dataCenterID);
-        windowsSorted.insert(winTreeKeyAfter, dataCenterID);
+        linuxSorted.insert(linuxKey, dataCenterID);
+        windowsSorted.insert(windowsKey, dataCenterID);
     } catch (std::bad_alloc& ba) {
         return DS_ALLOCATION_ERROR;
     }
@@ -120,22 +123,26 @@ DSStatusType DataSystem::FreeServer(int dataCenterID, unsigned int serverID) {
 
 DSStatusType DataSystem::GetDataCentersByOS(OS os, int** dataCentersArr, int* numOfDataCenters) {
     if (!dataCentersArr || !numOfDataCenters) return DS_INVALID_INPUT;
-    if (dataCenters.getSize() == 0) return DS_FAILURE; // no data centers
 
-    *numOfDataCenters = dataCenters.getSize();
-    *dataCentersArr = (int*)malloc((sizeof(int))*dataCenters.getSize());
+    int size = dataCenters.getSize();
+    if (size == 0) return DS_FAILURE; // no data centers
+
+    *numOfDataCenters = size;
+    *dataCentersArr = (int*)malloc((sizeof(int))*size);
     if (*dataCentersArr == nullptr) return DS_ALLOCATION_ERROR;
 
     // inorder traversal on the OS tree to fill the array
-    int j = 0;
-    if (os == LINUX) {
-        for (auto i=linuxSorted.begin(); i != linuxSorted.end(); i++, j++) {
-            (*dataCentersArr)[j] = *i;
-        }
-    } else {
-        for (auto i=windowsSorted.begin(); i != windowsSorted.end(); i++, j++) {
-            (*dataCentersArr)[j] = *i;
-        }
+    auto node = linuxSorted.begin();
+    auto end = linuxSorted.end();
+
+    if (os == WINDOWS) {
+        node = windowsSorted.begin();
+        end = windowsSorted.end();
+    }
+
+    int index = 0;
+    for (; node != end; node++, index++) {
+        (*dataCentersArr)[index] = *node;
     }
 
     return DS_SUCCESS;
