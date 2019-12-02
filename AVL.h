@@ -8,10 +8,9 @@ using namespace std;
 enum AVLResult { AVL_SUCCESS, AVL_FAILURE, AVL_INVALID_INPUT, AVL_ALREADY_EXIST, AVL_NOT_EXIST };
 
 template <class KeyType, class DataType>
-class TreeNode {
+struct TreeNode {
     KeyType key;
     DataType data;
-public:
     TreeNode* parent, * left, * right;
     int height;
 
@@ -22,8 +21,6 @@ public:
             parent(parent), left(nullptr), right(nullptr),
             height(0) {};
 
-    const KeyType& getKey() const;
-    const DataType& getData() const;
     int getBalanceFactor() const;
     bool isLeftSubtree() const;
     bool isLeaf() const;
@@ -41,7 +38,7 @@ public:
     public:
         TreeIterator() : curr(nullptr), last(nullptr) {};
         DataType& operator*() const;
-        TreeIterator operator++(int);
+        const TreeIterator operator++(int);
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
         bool operator!=(const TreeIterator& other) const;
@@ -125,8 +122,8 @@ template <class KeyType, class DataType>
 typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::find(const KeyType& key) const {
     auto ptr = dummyRoot->left;
 
-    while (ptr != nullptr && key != ptr->getKey()) {
-        if (key < ptr->getKey()) {
+    while (ptr != nullptr && key != ptr->key) {
+        if (key < ptr->key) {
             ptr = ptr->left;
         }
         else {
@@ -150,9 +147,9 @@ AVLResult AVL<KeyType, DataType>::insert(const KeyType& key, const DataType& dat
         auto ptr = dummyRoot->left;
 
         // find where the new node should be placed
-        while (ptr != nullptr && key != ptr->getKey()) {
+        while (ptr != nullptr && key != ptr->key) {
             last = ptr;
-            if (key < ptr->getKey()) {
+            if (key < ptr->key) {
                 ptr = ptr->left;
             } else {
                 ptr = ptr->right;
@@ -164,7 +161,7 @@ AVLResult AVL<KeyType, DataType>::insert(const KeyType& key, const DataType& dat
 
         // Add the new node:
         ptr = new TreeNode<KeyType, DataType>(key, data, last);
-        if (key < last->getKey()) {
+        if (key < last->key) {
             last->left = ptr;
         } else {
             last->right = ptr;
@@ -392,7 +389,7 @@ void AVL<KeyType, DataType>::printTreeHelp(TreeNode<KeyType, DataType>* root, in
     cout << endl;
     for (int i = COUNT; i < space; i++)
         cout << " ";
-    cout << root->getKey() << "\n";
+    cout << root->key << "\n";
 
     // Process left child
     printTreeHelp(root->left, space);
@@ -402,11 +399,11 @@ void AVL<KeyType, DataType>::printTreeHelp(TreeNode<KeyType, DataType>* root, in
 template <class KeyType, class DataType>
 DataType& AVL<KeyType, DataType>::TreeIterator::operator*() const {
     // assert(curr->parent != nullptr); // can't dereference the dummy
-    return (curr->getData());
+    return (curr->data);
 }
 
 template <class KeyType, class DataType>
-typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::TreeIterator::operator++(int) {
+const typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::TreeIterator::operator++(int) {
     // check if reached end (dummyNode) before ++
     if (curr->parent == nullptr)
         return *this;
@@ -449,7 +446,7 @@ bool AVL<KeyType, DataType>::TreeIterator::operator<(const TreeIterator& other) 
         return true; // everything is smaller than the end
 
     // compare keys with key's operator <
-    return (curr->getKey() < other.curr->getKey());
+    return (curr->key < other.curr->key);
 }
 
 template <class KeyType, class DataType>
@@ -464,16 +461,6 @@ bool AVL<KeyType, DataType>::TreeIterator::operator!=(const TreeIterator& other)
 
 
 //-------------------------TREE NODE FUNCTIONS-------------------------
-template <class KeyType, class DataType>
-const KeyType& TreeNode<KeyType, DataType>::getKey() const {
-    return key;
-}
-
-template <class KeyType, class DataType>
-const DataType& TreeNode<KeyType, DataType>::getData() const {
-    return data;
-}
-
 template <class KeyType, class DataType>
 int TreeNode<KeyType, DataType>::getBalanceFactor() const {
     int left_height = -1, right_height = -1;

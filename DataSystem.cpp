@@ -93,9 +93,9 @@ DSStatusType DataSystem::RequestServer(int dataCenterID, unsigned int serverID, 
     windowsSorted.remove(windowsKey);
 
     // update the OSKeys' data
-    linuxKey.serverCount(dataCenterPtr->GetLinuxNum());
+    linuxKey.serverCount = dataCenterPtr->GetLinuxNum();
     linuxKey.dataCenterID = dataCenterID;
-    windowsKey.serverCount(dataCenterPtr->GetWinNum());
+    windowsKey.serverCount = dataCenterPtr->GetWinNum();
     windowsKey.dataCenterID = dataCenterID;
 
     // insert the updated OSkeys to the OS avl trees
