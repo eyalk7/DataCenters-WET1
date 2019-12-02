@@ -17,7 +17,6 @@ void printRes(StatusType res) {
 }
 
 int main() {
-    vector<int> assignedIDs(10000000);
     int numOfServers = 10, numOfFarms = 1000000;
 
     // Init
@@ -66,7 +65,7 @@ int main() {
     cout << "Assigns " << numOfServers/2 << " servers as windows" << endl;
     for (int i=1; i<numOfFarms; i++) {
         for (int j=0; j<numOfServers/2; j++) {
-            auto res = RequestServer(DS, i, j, 1, &assignedIDs[i]);
+            auto res = RequestServer(DS, i, j, 1, &dummy);
             if (res != SUCCESS) printRes(res);
         }
     }
