@@ -17,8 +17,7 @@ void printRes(StatusType res) {
 }
 
 int main() {
-    vector<int> assignedIDs(10000000);
-    int numOfServers = 10, numOfFarms = 1000000;
+    int numOfServers = 1000, numOfFarms = 1000;
 
     // Init
     void* DS = Init();
@@ -52,6 +51,13 @@ int main() {
     }
     cout << endl;
 
+    cout << "try to request a server (all should be used)" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = RequestServer(DS, i, 0, 0, &dummy);
+        if (res != FAILURE) printRes(res);
+    }
+    cout << endl;
+
     // FreeServer
     cout << "free all even numbered servers" << endl;
     for (int i=1; i<numOfFarms; i++) {
@@ -66,46 +72,28 @@ int main() {
     cout << "Assigns " << numOfServers/2 << " servers as windows" << endl;
     for (int i=1; i<numOfFarms; i++) {
         for (int j=0; j<numOfServers/2; j++) {
-            auto res = RequestServer(DS, i, j, 1, &assignedIDs[i]);
+            auto res = RequestServer(DS, i, j, 1, &dummy);
             if (res != SUCCESS) printRes(res);
         }
     }
-/*
 
-    // Sorted by Windows
-    int* dataCenters1;
-    int numOfDataCenters1;
-    cout << "GetDataCentersByOS: (windows)" << endl;
-    printRes( GetDataCentersByOS(DS, 1, &dataCenters1, &numOfDataCenters1) );
-//    for (int i=0; i<numOfDataCenters1; i++) {
-//        cout << dataCenters1[i] << endl;
-//    }
-    cout << endl;
-    free(dataCenters1);
+    cout << "try to request a server (all should be used)" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = RequestServer(DS, i, 0, 0, &dummy);
+        if (res != FAILURE) printRes(res);
+    }
     cout << endl;
 
-    // Sorted by Linux
-    int* dataCenters2;
-    int numOfDataCenters2;
-    cout << "GetDataCentersByOS: (linux)" << endl;
-    printRes( GetDataCentersByOS(DS, 0, &dataCenters2, &numOfDataCenters2) );
-//    for (int i=0; i<numOfDataCenters2; i++) {
-//        cout << dataCenters2[i] << " ";
-//    }
-    cout << endl;
-    free(dataCenters2);
-    cout << endl;
-*/
-
-    // RemoveDataCenter
+ /*   // RemoveDataCenter
     cout << "RemoveDataCenter: " << endl;
     for (int i=1; i<numOfFarms; i++) {
         auto res = RemoveDataCenter(DS, i);
         if (res != SUCCESS) printRes(res);
     }
-    cout << endl;
+    cout << endl;*/
 
     Quit(&DS);
+    cout << "finished";
 
     return 0;
 }
