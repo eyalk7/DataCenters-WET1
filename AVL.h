@@ -35,7 +35,7 @@ public:
     public:
         TreeIterator() : curr(nullptr), last(nullptr) {};
         DataType& operator*() const;
-        const TreeIterator& operator++(int);
+        TreeIterator operator++(int);
         bool operator<(const TreeIterator& other) const;
         bool operator==(const TreeIterator& other) const;
         bool operator!=(const TreeIterator& other) const;
@@ -170,7 +170,6 @@ AVLResult AVL<KeyType, DataType>::insert(const KeyType& key, const DataType& dat
     {
         // tree is empty
         dummyRoot->left = new TreeNode<KeyType, DataType>(key, data, dummyRoot);
-        dummyRoot->left->parent = dummyRoot;
     }
 
     size++;
@@ -190,9 +189,6 @@ AVLResult AVL<KeyType, DataType>::remove(const KeyType& key) {
     auto to_delete = iter.curr;
     if (to_delete->hasTwoSons()) {
         // get next node in the inorder traversal
-        TreeIterator iter;
-        iter.curr = to_delete;
-        iter.last = to_delete->left;
         iter++;
         auto next = iter.curr;
 
@@ -376,7 +372,7 @@ DataType& AVL<KeyType, DataType>::TreeIterator::operator*() const {
 }
 
 template <class KeyType, class DataType>
-const typename AVL<KeyType, DataType>::TreeIterator& AVL<KeyType, DataType>::TreeIterator::operator++(int) {
+typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::TreeIterator::operator++(int) {
     // check if reached end (dummyNode) before ++
     if (curr->parent == nullptr)
         return *this;
