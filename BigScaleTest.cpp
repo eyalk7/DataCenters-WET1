@@ -17,7 +17,7 @@ void printRes(StatusType res) {
 }
 
 int main() {
-    int numOfServers = 10, numOfFarms = 1000000;
+    int numOfServers = 100000, numOfFarms = 1000;
 
     // Init
     void* DS = Init();
@@ -51,6 +51,13 @@ int main() {
     }
     cout << endl;
 
+    cout << "try to request a server (all should be used)" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = RequestServer(DS, i, 0, 0, &dummy);
+        if (res != FAILURE) printRes(res);
+    }
+    cout << endl;
+
     // FreeServer
     cout << "free all even numbered servers" << endl;
     for (int i=1; i<numOfFarms; i++) {
@@ -69,6 +76,14 @@ int main() {
             if (res != SUCCESS) printRes(res);
         }
     }
+
+    cout << "try to request a server (all should be used)" << endl;
+    for (int i=1; i<numOfFarms; i++) {
+        auto res = RequestServer(DS, i, 0, 0, &dummy);
+        if (res != FAILURE) printRes(res);
+    }
+    cout << endl;
+
 /*
 
     // Sorted by Windows
@@ -105,6 +120,7 @@ int main() {
     cout << endl;
 
     Quit(&DS);
+    cout << "finished";
 
     return 0;
 }
