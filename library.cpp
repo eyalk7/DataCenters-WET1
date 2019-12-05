@@ -43,4 +43,5 @@ StatusType GetDataCentersByOS(void *DS, int os, int **dataCenters, int* numOfDat
 
 void Quit(void** DS) {
     delete (DataSystem*)(*DS);
+    *DS = nullptr;
 }
