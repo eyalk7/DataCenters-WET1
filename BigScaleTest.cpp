@@ -84,13 +84,13 @@ int main() {
     }
     cout << endl;
 
- /*   // RemoveDataCenter
+    // RemoveDataCenter
     cout << "RemoveDataCenter: " << endl;
     for (int i=1; i<numOfFarms; i++) {
         auto res = RemoveDataCenter(DS, i);
         if (res != SUCCESS) printRes(res);
     }
-    cout << endl;*/
+    cout << endl;
 
     Quit(&DS);
     cout << "finished";

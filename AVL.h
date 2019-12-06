@@ -22,8 +22,8 @@ public:
             parent(parent), left(nullptr), right(nullptr),
             height(0) {};
 
-    const KeyType& getKey() const;
-    const DataType& getData() const;
+    /*const*/ KeyType& getKey() /*const*/;
+    /*const*/ DataType& getData() /*const*/;
     int getBalanceFactor() const;
     bool isLeftSubtree() const;
     bool isLeaf() const;
@@ -465,12 +465,12 @@ bool AVL<KeyType, DataType>::TreeIterator::operator!=(const TreeIterator& other)
 
 //-------------------------TREE NODE FUNCTIONS-------------------------
 template <class KeyType, class DataType>
-const KeyType& TreeNode<KeyType, DataType>::getKey() const {
+/*const*/ KeyType& TreeNode<KeyType, DataType>::getKey() /*const*/ {
     return key;
 }
 
 template <class KeyType, class DataType>
-const DataType& TreeNode<KeyType, DataType>::getData() const {
+/*const*/ DataType& TreeNode<KeyType, DataType>::getData() /*const*/ {
     return data;
 }
 
