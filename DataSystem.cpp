@@ -21,7 +21,7 @@ bool OSKey::operator!=(const OSKey& other) const {
     return !operator==(other);
 }
 
-/*------------------DataSystem class implementation----------------------*/
+/*------------------MultiOSDataSystem class implementation----------------------*/
 DataSystem::~DataSystem() {
     for (auto iter = dataCenters.begin(); iter != dataCenters.end(); iter++) {
         delete (*iter);
