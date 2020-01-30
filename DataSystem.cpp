@@ -39,7 +39,10 @@ DSStatusType DataSystem::AddDataCenter(int dataCenterID, int numOfServers) {
         OSKey winTreeKey(0, dataCenterID);
 
         // insert to the avl trees
-        if (dataCenters.insert(dataCenterID, dataCenterPtr) != AVL_SUCCESS) return DS_FAILURE;
+        if (dataCenters.insert(dataCenterID, dataCenterPtr) != AVL_SUCCESS)  {
+            delete dataCenterPtr;
+            return DS_FAILURE;
+        }
         if (windowsSorted.insert(winTreeKey, dataCenterID) != AVL_SUCCESS) return DS_FAILURE;
         if (linuxSorted.insert(linuxTreeKey, dataCenterID) != AVL_SUCCESS) return DS_FAILURE;
 
