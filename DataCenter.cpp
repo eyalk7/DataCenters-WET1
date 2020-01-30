@@ -38,7 +38,7 @@ DataCenter::~DataCenter() {
     delete winDummy;
 
     // delete array
-    delete servers;
+    delete[] servers;
 }
 
 DSStatusType DataCenter::RequestServer(unsigned int serverID, OS os, int *assignedID) {
