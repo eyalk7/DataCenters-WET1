@@ -439,10 +439,10 @@ const typename AVL<KeyType, DataType>::TreeIterator AVL<KeyType, DataType>::Tree
 
 template <class KeyType, class DataType>
 bool AVL<KeyType, DataType>::TreeIterator::operator<(const TreeIterator& other) const {
-    if (this.curr == dummyRoot)
+    if (this->curr->parent == nullptr)
         return false; // if this is the end
 
-    if (other == end())
+    if (other.curr->parent == nullptr)
         return true; // everything is smaller than the end
 
     // compare keys with key's operator <
